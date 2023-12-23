@@ -119,7 +119,7 @@ def add_user_1_document():
         "ingredients": "all-purpose flour",
         "expiry_date": expiry
     }
-    print(item_3)
+    print(f'item #3: {item_3}')
 
     db: mongoDatabase = get_database(DATABASE_NAME)
     collection: mongoCollection = db[COLLECTION_NAME]
