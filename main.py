@@ -1,22 +1,21 @@
 import datetime
 import os
 import sys
-
-import pymongo
 from datetime import *
 
-from dotenv import load_dotenv
-
-from pymongo import MongoClient
-from pymongo.collection import Collection as mongoCollection
-from pymongo.database import Database as mongoDatabase
-
+import pymongo
 from dateutil import parser
 from dateutil.relativedelta import *
+from dotenv import load_dotenv
+from pymongo import MongoClient
+# alias some types to shorter ones to save on typing
+from pymongo.collection import Collection as mongoCollection
+from pymongo.database import Database as mongoDatabase
 
 # GLOBAL constants
 DATABASE_NAME: str = 'user_shopping_list'
 COLLECTION_NAME: str = 'user_1_items'
+
 
 def get_python_version() -> str:
     return f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}'
@@ -26,15 +25,17 @@ def get_connection() -> MongoClient:
     pwd = get_mongo_db_pwd()
     CONNECTION_STRING = f'mongodb+srv://frederickmorrison1953:{pwd}@pymongocluster.6sstkik.mongodb.net/'
     # print(CONNECTION_STRING)
-    connection = MongoClient(CONNECTION_STRING)
+    connection: mongoCollection = MongoClient(CONNECTION_STRING)
     # print(type(connection))
     return connection
+
 
 def display_databases():
     connection: MongoClient = get_connection()
     dbs = connection.list_database_names()
-    #print(type(dbs[0]))
-    print(f'databases in current collection: {dbs}')
+    # print(type(dbs[0]))
+    print(f'databases in current connection: {dbs}')
+
 
 def display_collections(database_name: str):
     connection: MongoClient = get_connection()
@@ -43,17 +44,19 @@ def display_collections(database_name: str):
     print(f'collections in database {database_name}: {collections}')
 
 
-def get_database(database_name:str) -> mongoDatabase:
+def get_database(database_name: str) -> mongoDatabase:
     connection: MongoClient = get_connection()
     db: mongoDatabase = connection[database_name]
-    #print(type(db))
+    # print(type(db))
     return db
 
-def get_collection(database_name:str, collection_name: str) -> mongoCollection:
+
+def get_collection(database_name: str, collection_name: str) -> mongoCollection:
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[collection_name]
     # print(type(collection))
     return collection
+
 
 def get_mongo_db_pwd() -> str:
     load_dotenv()
@@ -63,10 +66,14 @@ def get_mongo_db_pwd() -> str:
 def drop_existing_collection():
     db: mongoDatabase = get_database(DATABASE_NAME)
     # Does the collection still exist?
-    print('user_1_items' in db.list_collection_names())
+    collection_exists: bool = COLLECTION_NAME in db.list_collection_names()
+    print(f'Before drop, collection {COLLECTION_NAME} exists? {collection_exists}')
     collection: mongoCollection = db[COLLECTION_NAME]
     collection.drop()
+    collection_exists: bool = COLLECTION_NAME in db.list_collection_names()
+    print(f'After  drop, collection {COLLECTION_NAME} exists? {collection_exists}')
     display_collections(db.name)
+
 
 def create_user_1_collection() -> mongoCollection:
     db: mongoDatabase = get_database(DATABASE_NAME)
@@ -95,6 +102,7 @@ def create_user_1_collection() -> mongoCollection:
 
     return collection
 
+
 def add_user_1_document():
     # start with the day after today ...
     expiry = date.today() + relativedelta(days=1)
@@ -121,10 +129,9 @@ def add_user_1_document():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
-    display_databases()    
+    display_databases()
     display_collections(DATABASE_NAME)
     drop_existing_collection()
     collection: mongoCollection = create_user_1_collection()
     display_collections(DATABASE_NAME)
     add_user_1_document()
-
