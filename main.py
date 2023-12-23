@@ -15,20 +15,48 @@ def get_python_version() -> str:
     return f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}'
 
 
-def get_database() -> pymongo.database.Database:
+def get_connection() -> MongoClient:
     pwd = get_mongo_db_pwd()
     CONNECTION_STRING = f'mongodb+srv://frederickmorrison1953:{pwd}@pymongocluster.6sstkik.mongodb.net/'
+    print(CONNECTION_STRING)
+    connection = MongoClient(CONNECTION_STRING)
+    # print(type(connection))
+    return connection
 
-    client = MongoClient(CONNECTION_STRING)
-    db = client['user_shopping_list']
-    print(type(db))
+def display_databases():
+    connection: MongoClient = get_connection()
+    dbs = connection.list_database_names()
+    #print(type(dbs[0]))
+    print(f'databases in current collection: {dbs}')
+
+def display_collections(database: str):
+    connection: MongoClient = get_connection()
+    db = connection.get_database(database)
+    collections = db.list_collection_names()
+    print(f'collections in database {database}: {collections}')
+
+
+def get_database() -> pymongo.database.Database:
+    connection: MongoClient = get_connection()
+    db = connection['user_shopping_list']
+    #print(type(db))
     return db
 
+def get_collection(database_name:str, collection_name: str):
+    pass
 
 def get_mongo_db_pwd() -> str:
     load_dotenv()
     return os.getenv('MONGODB_PWD')
 
+# THIS METHOD IS NOT ACTUALLYU DROPPING THE SPECIFIED COLLECTION - WHY ???
+def drop_existing_collection():
+    db = get_database()
+    # Does the collection still exist?
+    print('user_1_items' in db.list_collection_names())
+    collection = db['user_1_items']
+    collection.drop()
+    display_collections(db.name)
 
 def create_user_1_collection():
     db = get_database()
@@ -80,5 +108,10 @@ def add_user_1_document():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
-    create_user_1_collection()
-    # add_user_1_document()
+    display_databases()
+    display_collections('user_shopping_list')
+    collection = get_collection('user_shopping_list', 'user_1_items')
+    drop_existing_collection()
+    #create_user_1_collection()
+    #add_user_1_document()
+
