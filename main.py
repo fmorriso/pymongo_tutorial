@@ -8,7 +8,7 @@ from dateutil import parser
 from dateutil.relativedelta import *
 from dotenv import load_dotenv
 from pymongo import MongoClient
-# alias some types to shorter ones to save on typing
+# alias some types to shorter ones to save on typing and avoid namespace collisions with other packages
 from pymongo.collection import Collection as mongoCollection
 from pymongo.database import Database as mongoDatabase
 
