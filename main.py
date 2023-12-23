@@ -18,7 +18,7 @@ def get_python_version() -> str:
 def get_connection() -> MongoClient:
     pwd = get_mongo_db_pwd()
     CONNECTION_STRING = f'mongodb+srv://frederickmorrison1953:{pwd}@pymongocluster.6sstkik.mongodb.net/'
-    print(CONNECTION_STRING)
+    # print(CONNECTION_STRING)
     connection = MongoClient(CONNECTION_STRING)
     # print(type(connection))
     return connection
@@ -29,21 +29,24 @@ def display_databases():
     #print(type(dbs[0]))
     print(f'databases in current collection: {dbs}')
 
-def display_collections(database: str):
+def display_collections(database_name: str):
     connection: MongoClient = get_connection()
-    db = connection.get_database(database)
+    db = connection.get_database(database_name)
     collections = db.list_collection_names()
-    print(f'collections in database {database}: {collections}')
+    print(f'collections in database {database_name}: {collections}')
 
 
-def get_database() -> pymongo.database.Database:
+def get_database(database_name:str) -> pymongo.database.Database:
     connection: MongoClient = get_connection()
-    db = connection['user_shopping_list']
+    db = connection[database_name]
     #print(type(db))
     return db
 
-def get_collection(database_name:str, collection_name: str):
-    pass
+def get_collection(database_name:str, collection_name: str) -> pymongo.collection.Collection:
+    db = get_database(database_name)
+    collection = db[collection_name]
+    # print(type(collection))
+    return collection
 
 def get_mongo_db_pwd() -> str:
     load_dotenv()
@@ -51,16 +54,17 @@ def get_mongo_db_pwd() -> str:
 
 # THIS METHOD IS NOT ACTUALLYU DROPPING THE SPECIFIED COLLECTION - WHY ???
 def drop_existing_collection():
-    db = get_database()
+    db = get_database('user_shopping_list')
     # Does the collection still exist?
     print('user_1_items' in db.list_collection_names())
     collection = db['user_1_items']
     collection.drop()
     display_collections(db.name)
 
-def create_user_1_collection():
-    db = get_database()
-    collection_name = db['user_1_items']
+def create_user_1_collection() -> pymongo.collection.Collection:
+    db = get_database('user_shopping_list')
+    collection = db['user_1_items']
+    print(type(collection))
     # now add some documents to the collection
     item_1 = {
         "_id": "U1IT00001",
@@ -80,7 +84,9 @@ def create_user_1_collection():
         "item_description": "brown country eggs"
     }
 
-    collection_name.insert_many([item_1, item_2])
+    collection.insert_many([item_1, item_2])
+
+    return collection
 
 def add_user_1_document():
     # start with the day after today ...
@@ -100,9 +106,9 @@ def add_user_1_document():
     }
     print(item_3)
 
-    db = get_database()
-    collection_name = db['user_1_items']
-    collection_name.insert_one(item_3)
+    db = get_database('user_shopping_list')
+    collection: pymongo.collection.Collection = db['user_1_items']
+    collection.insert_one(item_3)
 
 
 # Press the green button in the gutter to run the script.
@@ -110,8 +116,8 @@ if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
     display_databases()
     display_collections('user_shopping_list')
-    collection = get_collection('user_shopping_list', 'user_1_items')
     drop_existing_collection()
-    #create_user_1_collection()
+    collection = create_user_1_collection()
+    display_collections('user_shopping_list')
     #add_user_1_document()
 
