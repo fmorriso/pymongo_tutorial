@@ -63,16 +63,23 @@ def get_mongo_db_pwd() -> str:
     return os.getenv('MONGODB_PWD')
 
 
-def drop_existing_collection():
-    db: mongoDatabase = get_database(DATABASE_NAME)
+def collection_exists(database_name: str, collection_name: str) -> bool:
+    db: mongoDatabase = get_database(database_name)
+    return collection_name in db.list_collection_names()
+
+
+def drop_existing_collection(database_name: str, collection_name: str):
+    db: mongoDatabase = get_database(database_name)
     # Does the collection still exist?
-    collection_exists: bool = COLLECTION_NAME in db.list_collection_names()
-    print(f'Before drop, collection {COLLECTION_NAME} exists? {collection_exists}')
-    collection: mongoCollection = db[COLLECTION_NAME]
-    collection.drop()
-    collection_exists: bool = COLLECTION_NAME in db.list_collection_names()
-    print(f'After  drop, collection {COLLECTION_NAME} exists? {collection_exists}')
-    display_collections(db.name)
+    exists: bool = collection_exists(db.name, collection_name)
+    if exists:
+        print(f'Before drop, collection {collection_name} exists? {exists}')
+        collection: mongoCollection = db[collection_name]
+        collection.drop()
+    else:
+        print(f'Collection {collection_name} does not exist in database {db.name}')
+    exists: bool = collection_exists(db.name, collection_name)
+    print(f'After  drop, collection {collection_name} exists? {exists}')
 
 
 def create_user_1_collection() -> mongoCollection:
@@ -131,7 +138,7 @@ if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
     display_databases()
     display_collections(DATABASE_NAME)
-    drop_existing_collection()
-    collection: mongoCollection = create_user_1_collection()
-    display_collections(DATABASE_NAME)
-    add_user_1_document()
+    drop_existing_collection(DATABASE_NAME, COLLECTION_NAME)
+    #collection: mongoCollection = create_user_1_collection()
+    #display_collections(DATABASE_NAME)
+    #add_user_1_document()
