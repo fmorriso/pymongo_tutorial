@@ -1,4 +1,4 @@
-# PyMongo Tutorial
+# PyMongo Tutorial (with my preferences)
 ## References
 * [PyMongo Tutorial](https://sqlmodel.tiangolo.com/tutorial/create-db-and-table-with-db-browser/https://www.mongodb.com/languages/python)
 * [Python .gitignore](https://github.com/github/gitignore/blob/main/Python.gitignore)
