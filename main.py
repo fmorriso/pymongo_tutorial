@@ -201,7 +201,7 @@ if __name__ == '__main__':
     display_collections(DATABASE_NAME)
     add_user_1_document()
     select_all(DATABASE_NAME, COLLECTION_NAME)
-    
+
     column_to_index = 'category'
     found_existing_index, index_name = index_exists(DATABASE_NAME, DATABASE_NAME, column_to_index)
     if found_existing_index:
