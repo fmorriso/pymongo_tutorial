@@ -147,14 +147,53 @@ def select_all(database_name: str, collection_name: str):
     # WARNING: to use the DataFrame to_markdown() method YOU MUST SEPARATELY INSTALL pip package tabulate !!!
     print(items.to_markdown(index=False, tablefmt='plain'))
 
+def filter_collection(database_name: str, collection_name: str, kvp: dict):
+    print(kvp)
+    db: mongoDatabase = get_database(database_name)
+    collection: mongoCollection = db[COLLECTION_NAME]
+    items_collection: mongoCursor = collection.find(kvp)
+    # convert dictionary object to dataframe to help with missing key fields
+    items = DataFrame(items_collection)
+    print(items.to_markdown(index=False, tablefmt='plain'))
 
-# Press the green button in the gutter to run the script.
+def create_index(database_name: str, collection_name: str, column_name: str):
+    db: mongoDatabase = get_database(database_name)
+    collection: mongoCollection = db[COLLECTION_NAME]
+    indexes: dict = collection.index_information()
+    #TODO: Find faster, more efficient way to search for existing index in this complex structure
+    found_existing_index: bool = False
+    index_name: str = ''
+    for index_key in indexes.keys():
+        index_value = indexes[index_key]
+        #print(index)
+        index_list: list = index_value['key']
+        #print(index_list)
+        col_tuple: tuple = index_list[0]
+        #print(type(col_tup;e))
+        col_name = col_tuple[0]
+        #print(col_name)
+        if col_name == column_name:
+            found_existing_index = True
+            index_name = index_key
+            break
+
+    if found_existing_index:
+        print(f'Index named {index_name} on column {column_name} already exists')
+    else:
+        index_name = collection.create_index(column_name)
+        print(f'Index nnamed {index_name} on column {column_name} has been created')
+
+
 if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
     display_databases()
     display_collections(DATABASE_NAME)
+
     drop_existing_collection(DATABASE_NAME, COLLECTION_NAME)
     collection: mongoCollection = create_user_1_collection()
     display_collections(DATABASE_NAME)
     add_user_1_document()
     select_all(DATABASE_NAME, COLLECTION_NAME)
+    
+    create_index(DATABASE_NAME, COLLECTION_NAME, 'category')
+    filter_collection(DATABASE_NAME, COLLECTION_NAME, {'category': 'food'})
