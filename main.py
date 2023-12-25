@@ -156,7 +156,7 @@ def filter_collection(database_name: str, collection_name: str, kvp: dict):
     items = DataFrame(items_collection)
     print(items.to_markdown(index=False, tablefmt='plain'))
 
-def index_exists(database_name: str, collection_name: str, column_name: str) -> bool:
+def index_exists(database_name: str, collection_name: str, column_name: str) -> (bool, str):
     """Determine if an index on the specified column already exists"""
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
@@ -174,15 +174,16 @@ def index_exists(database_name: str, collection_name: str, column_name: str) -> 
         #print(col_name)
         if col_name == column_name:
             found_existing_index = True
+            index_name = index_key
             break
 
-    return found_existing_index
+    return found_existing_index, index_name
 
 def create_index(database_name: str, collection_name: str, column_name: str):
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
     # double-check to make sure we don't try to create the index again
-    found_existing_index: bool = index_exists(database_name, collection_name, column_name)
+    (found_existing_index, index_name) = index_exists(database_name, collection_name, column_name)
     if found_existing_index:
         print(f'Index named {index_name} on column {column_name} already exists')
     else:
@@ -194,17 +195,17 @@ if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
     display_databases()
     display_collections(DATABASE_NAME)
-    """
+
     drop_existing_collection(DATABASE_NAME, COLLECTION_NAME)
     collection: mongoCollection = create_user_1_collection()
     display_collections(DATABASE_NAME)
     add_user_1_document()
     select_all(DATABASE_NAME, COLLECTION_NAME)
-    """
+    
     column_to_index = 'category'
-    found_existing_index: bool = index_exists(DATABASE_NAME, DATABASE_NAME, column_to_index)
+    found_existing_index, index_name = index_exists(DATABASE_NAME, DATABASE_NAME, column_to_index)
     if found_existing_index:
-        print(f'Index on column {column_to_index} already exists')
+        print(f'Index named {index_name} on column {column_to_index} already exists')
     else:
         index_name = collection.create_index(column_to_index)
         print(f'Index named {index_name} on column {column_to_index} has been created')
