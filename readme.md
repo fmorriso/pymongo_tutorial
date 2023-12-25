@@ -9,6 +9,6 @@
 * Python 3.12.1
 * PyCharm Community Edition  2023.3.2
 * [Python DateUtil](https://dateutil.readthedocs.io/en/stable/) 2.8.2
-* DotEnv
+* Python-DotEnv 1.0.0
 * Pandas 2.1.4
 * Tabulate 0.9.0
