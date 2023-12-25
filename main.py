@@ -11,6 +11,7 @@ from pymongo import MongoClient
 # alias some types to shorter ones to save on typing and avoid namespace collisions with other packages
 from pymongo.collection import Collection as mongoCollection
 from pymongo.database import Database as mongoDatabase
+from pymongo.cursor import Cursor as mongoCursor
 
 # GLOBAL constants
 DATABASE_NAME: str = 'user_shopping_list'
@@ -132,6 +133,15 @@ def add_user_1_document():
     collection: mongoCollection = db[COLLECTION_NAME]
     collection.insert_one(item_3)
 
+def select_all(database_name: str, collection_name: str):
+    db: mongoDatabase = get_database(database_name)
+    collection: mongoCollection = db[COLLECTION_NAME]
+    items: mongoCursor = collection.find()
+    #print(type(items))
+    for item in items:
+        print(item)
+
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -142,3 +152,4 @@ if __name__ == '__main__':
     collection: mongoCollection = create_user_1_collection()
     display_collections(DATABASE_NAME)
     add_user_1_document()
+    select_all(DATABASE_NAME, COLLECTION_NAME)
