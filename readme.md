@@ -1,6 +1,6 @@
 # PyMongo Tutorial (with my preferences)
 ## References
-* [PyMongo Tutorial](https://sqlmodel.tiangolo.com/tutorial/create-db-and-table-with-db-browser/https://www.mongodb.com/languages/python)
+* [PyMongo Tutorial](https://www.mongodb.com/languages/python)
 * [Python .gitignore](https://github.com/github/gitignore/blob/main/Python.gitignore)
 * [MongoDB Atlas](https://www.mongodb.com/atlas/database)
 ## History (lastest first)
