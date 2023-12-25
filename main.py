@@ -2,6 +2,9 @@ import datetime
 import os
 import sys
 from datetime import *
+import pandas as pd
+# WARNING: to use the DataFrame to_markdown() method YOU MUST SEPARATELY INSTALL tabulate!!!
+from pandas import DataFrame
 
 import pymongo
 from dateutil import parser
@@ -114,20 +117,20 @@ def create_user_1_collection() -> mongoCollection:
 def add_user_1_document():
     # start with the day after today ...
     expiry = date.today() + relativedelta(days=1)
-    print(f'expiry = {expiry}')
+    #print(f'expiry = {expiry}')
     # add 12 months to that date
     expiry += relativedelta(months=12)
-    print(f'expiry = {expiry}')
+    #print(f'expiry = {expiry}')
     # convert a date to a datetime that goes to the end of the day
     expiry = datetime.combine(expiry, datetime.max.time())
-    print(f'expiry = {expiry}')
+    #print(f'expiry = {expiry}')
     item_3 = {
         "item_name": "Bread",
         "quantity": 2,
         "ingredients": "all-purpose flour",
         "expiry_date": expiry
     }
-    print(f'item #3: {item_3}')
+    # print(f'item #3: {item_3}')
 
     db: mongoDatabase = get_database(DATABASE_NAME)
     collection: mongoCollection = db[COLLECTION_NAME]
@@ -136,11 +139,13 @@ def add_user_1_document():
 def select_all(database_name: str, collection_name: str):
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
-    items: mongoCursor = collection.find()
+    items_collection: mongoCursor = collection.find()
+    # convert dictionary object to dataframe to help with missing key fields
+    items = DataFrame(items_collection)
     #print(type(items))
-    for item in items:
-        print(item)
-
+    #print(items.to_string())
+    # WARNING: to use the DataFrame to_markdown() method YOU MUST SEPARATELY INSTALL pip package tabulate !!!
+    print(items.to_markdown(index=False, tablefmt='plain'))
 
 
 # Press the green button in the gutter to run the script.
