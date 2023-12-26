@@ -16,21 +16,27 @@ from pymongo.collection import Collection as mongoCollection
 from pymongo.database import Database as mongoDatabase
 from pymongo.cursor import Cursor as mongoCursor
 
-# GLOBAL constants
-DATABASE_NAME: str = 'user_shopping_list'
-COLLECTION_NAME: str = 'user_1_items'
+# GLOBAL constants (see get_environment_information() )
+DATABASE_NAME: str = ''
+COLLECTION_NAME: str = ''
 
 
 def get_python_version() -> str:
     return f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}'
 
+def get_environment_information():
+    """initialize the global database name and collection names by reading them from the .env file"""
+    global DATABASE_NAME,COLLECTION_NAME
+    load_dotenv()
+    DATABASE_NAME = os.getenv('DATABASE_NAME')
+    COLLECTION_NAME = os.getenv('COLLECTION_NAME')
 
 def get_connection() -> MongoClient:
+    """get a client connection to my personal MongoDB Atlas cluster using my personal usrid and password"""
+    uid = get_mongo_db_uid()
     pwd = get_mongo_db_pwd()
-    CONNECTION_STRING = f'mongodb+srv://frederickmorrison1953:{pwd}@pymongocluster.6sstkik.mongodb.net/'
-    # print(CONNECTION_STRING)
+    CONNECTION_STRING = f'mongodb+srv://{uid}:{pwd}@pymongocluster.6sstkik.mongodb.net/'
     connection: mongoCollection = MongoClient(CONNECTION_STRING)
-    # print(type(connection))
     return connection
 
 
@@ -61,6 +67,9 @@ def get_collection(database_name: str, collection_name: str) -> mongoCollection:
     # print(type(collection))
     return collection
 
+def get_mongo_db_uid() -> str:
+    load_dotenv()
+    return os.getenv('MONGODB_UID')
 
 def get_mongo_db_pwd() -> str:
     load_dotenv()
@@ -189,6 +198,7 @@ def create_index(database_name: str, collection_name: str, column_name: str) -> 
 
 if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
+    get_environment_information()
     display_databases()
     display_collections(DATABASE_NAME)
     
