@@ -3,7 +3,7 @@ import os
 import sys
 from datetime import *
 import pandas as pd
-# WARNING: to use the DataFrame to_markdown() method YOU MUST SEPARATELY INSTALL tabulate!!!
+# WARNING: to use the DataFrame to_markdown() method YOU MUST SEPARATELY INSTALL tabulate
 from pandas import DataFrame
 
 import pymongo
@@ -35,8 +35,9 @@ def get_connection() -> MongoClient:
     """get a client connection to my personal MongoDB Atlas cluster using my personal usrid and password"""
     uid = get_mongo_db_uid()
     pwd = get_mongo_db_pwd()
-    CONNECTION_STRING = f'mongodb+srv://{uid}:{pwd}@pymongocluster.6sstkik.mongodb.net/'
-    connection: mongoCollection = MongoClient(CONNECTION_STRING)
+    clusterName = get_mongo_db_clusterName()
+    connection_string = f'mongodb+srv://{uid}:{pwd}@{clusterName}.6sstkik.mongodb.net/'
+    connection: mongoCollection = MongoClient(connection_string)
     return connection
 
 
@@ -67,13 +68,27 @@ def get_collection(database_name: str, collection_name: str) -> mongoCollection:
     # print(type(collection))
     return collection
 
+
 def get_mongo_db_uid() -> str:
     load_dotenv()
     return os.getenv('MONGODB_UID')
 
+
 def get_mongo_db_pwd() -> str:
     load_dotenv()
     return os.getenv('MONGODB_PWD')
+
+
+def get_mongo_db_clusterName() -> str:
+    load_dotenv()
+    return os.getenv('MONGODB_CLUSTER_NAME')
+
+def keep_existing_data() -> bool:
+    """Use entry in .env to determine if we keep all existing data or start from scratch"""
+    load_dotenv()
+    val = os.getenv('KEEP_EXISTING_DATA')
+    retval = eval(val)
+    return retval
 
 
 def collection_exists(database_name: str, collection_name: str) -> bool:
@@ -201,13 +216,15 @@ if __name__ == '__main__':
     get_environment_information()
     display_databases()
     display_collections(DATABASE_NAME)
-    
-    drop_existing_collection(DATABASE_NAME, COLLECTION_NAME)
-    collection: mongoCollection = create_user_1_collection()
-    display_collections(DATABASE_NAME)
-    add_user_1_document()
+
+    keep_existing: bool = keep_existing_data()
+    if not keep_existing:
+        drop_existing_collection(DATABASE_NAME, COLLECTION_NAME)
+        collection: mongoCollection = create_user_1_collection()
+        display_collections(DATABASE_NAME)
+        add_user_1_document()
+
     select_all(DATABASE_NAME, COLLECTION_NAME)
-    
     column_to_index = 'category'
     found_existing_index, index_name = index_exists(DATABASE_NAME, COLLECTION_NAME, column_to_index)
     if found_existing_index:
