@@ -164,21 +164,14 @@ def select_all(database_name: str, collection_name: str):
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
     items_collection: mongoCursor = collection.find()
-    # convert dictionary object to dataframe to help with missing key fields
-    items = DataFrame(items_collection)
-    #print(type(items))
-    #print(items.to_string())
-    # WARNING: to use the DataFrame to_markdown() method YOU MUST SEPARATELY INSTALL pip package tabulate !!!
-    print(items.to_markdown(index=False, tablefmt='plain'))
+    display_collection(items_collection)
 
 def filter_collection(database_name: str, collection_name: str, kvp: dict):
     print(kvp)
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
     items_collection: mongoCursor = collection.find(kvp)
-    # convert dictionary object to dataframe to help with missing key fields
-    items = DataFrame(items_collection)
-    print(items.to_markdown(index=False, tablefmt='plain'))
+    display_collection(items_collection)
 
 def index_exists(database_name: str, collection_name: str, column_name: str) -> (bool, str):
     """Determine if an index on the specified column already exists"""
@@ -209,6 +202,11 @@ def create_index(database_name: str, collection_name: str, column_name: str) -> 
     collection: mongoCollection = db[COLLECTION_NAME]
     index_name = collection.create_index(column_name)
     return index_name
+
+def display_collection(collection: mongoCollection):
+    # convert MongoDB collection to dataframe to help with missing key fields
+    items = DataFrame(collection)
+    print(items.to_markdown(index=False, tablefmt='plain'))
 
 
 if __name__ == '__main__':
