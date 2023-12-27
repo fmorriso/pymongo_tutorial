@@ -203,10 +203,11 @@ def create_index(database_name: str, collection_name: str, column_name: str) -> 
     index_name = collection.create_index(column_name)
     return index_name
 
+
 def display_collection(collection: mongoCollection):
     # convert MongoDB collection to dataframe to help with missing key fields
     items = DataFrame(collection)
-    print(items.to_markdown(index=False, tablefmt='plain'))
+    print(items.to_markdown(index=False, tablefmt='grid'))
 
 
 if __name__ == '__main__':
