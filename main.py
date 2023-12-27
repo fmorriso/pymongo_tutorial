@@ -174,12 +174,14 @@ def filter_collection(database_name: str, collection_name: str, kvp: dict):
     display_collection(items_collection)
 
 def index_exists(database_name: str, collection_name: str, column_name: str) -> (bool, str):
-    """Determine if an index on the specified column already exists"""
+    """Determine if an index on the specified column already exists."""
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
     indexes: dict = collection.index_information()
+    
     found_existing_index: bool = False
     index_name: str = ''
+
     for index_key in indexes.keys():
         index_value = indexes[index_key]
         #print(index)
@@ -187,13 +189,13 @@ def index_exists(database_name: str, collection_name: str, column_name: str) -> 
         #print(index_list)
         col_tuple: tuple = index_list[0]
         #print(type(col_tup;e))
-        col_name = col_tuple[0]
+        col_name: str = col_tuple[0]
         #print(col_name)
         if col_name == column_name:
             found_existing_index = True
             index_name = index_key
             break
-
+    
     return found_existing_index, index_name
 
 def create_index(database_name: str, collection_name: str, column_name: str) -> str:
@@ -205,6 +207,7 @@ def create_index(database_name: str, collection_name: str, column_name: str) -> 
 
 
 def display_collection(collection: mongoCollection):
+    """display a MongoDB collection in a table with headers, allowing for missing fields"""
     # convert MongoDB collection to dataframe to help with missing key fields
     items = DataFrame(collection)
     print(items.to_markdown(index=False, tablefmt='grid'))
