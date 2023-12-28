@@ -7,6 +7,7 @@
 * 2023-12-24 - completed tutorial
 * 2023-12-22 - initial creation
 ## Tools
+* MongoDB 6.0.12
 * Python 3.12.1
 * PyCharm Community Edition  2023.3.2
 * Visual Studio Code 1.85.1

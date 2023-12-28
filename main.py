@@ -43,8 +43,7 @@ def get_connection() -> MongoClient:
 
 def display_databases():
     connection: MongoClient = get_connection()
-    dbs = connection.list_database_names()
-    # print(type(dbs[0]))
+    dbs = connection.list_database_names()    
     print(f'databases in current connection: {dbs}')
 
 
@@ -82,6 +81,7 @@ def get_mongo_db_pwd() -> str:
 def get_mongo_db_clusterName() -> str:
     load_dotenv()
     return os.getenv('MONGODB_CLUSTER_NAME')
+
 
 def keep_existing_data() -> bool:
     """Use entry in .env to determine if we keep all existing data or start from scratch"""
@@ -160,11 +160,13 @@ def add_user_1_document():
     collection: mongoCollection = db[COLLECTION_NAME]
     collection.insert_one(item_3)
 
+
 def select_all(database_name: str, collection_name: str):
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
     items_collection: mongoCursor = collection.find()
     display_collection(items_collection)
+
 
 def filter_collection(database_name: str, collection_name: str, kvp: dict):
     print(kvp)
@@ -173,11 +175,13 @@ def filter_collection(database_name: str, collection_name: str, kvp: dict):
     items_collection: mongoCursor = collection.find(kvp)
     display_collection(items_collection)
 
+
 def index_exists(database_name: str, collection_name: str, column_name: str) -> (bool, str):
     """Determine if an index on the specified column already exists."""
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
     indexes: dict = collection.index_information()
+    
     
     found_existing_index: bool = False
     index_name: str = ''
@@ -198,6 +202,7 @@ def index_exists(database_name: str, collection_name: str, column_name: str) -> 
     
     return found_existing_index, index_name
 
+
 def create_index(database_name: str, collection_name: str, column_name: str) -> str:
     """ create an index on the specified column and return the name of the index created """
     db: mongoDatabase = get_database(database_name)
@@ -213,8 +218,16 @@ def display_collection(collection: mongoCollection):
     print(items.to_markdown(index=False, tablefmt='grid'))
 
 
+def get_mongodb_version()->str:
+    """return the MongoDB version being used"""
+    client = get_connection()
+    version = client.server_info()['version']
+    return version
+
+
 if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
+    print(f'MongoDB version: {get_mongodb_version()}')
     get_environment_information()
     display_databases()
     display_collections(DATABASE_NAME)
