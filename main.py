@@ -169,7 +169,7 @@ def select_all(database_name: str, collection_name: str):
 
 
 def filter_collection(database_name: str, collection_name: str, kvp: dict):
-    print(kvp)
+    # print(kvp)
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
     items_collection: mongoCursor = collection.find(kvp)
@@ -243,9 +243,9 @@ if __name__ == '__main__':
     column_to_index = 'category'
     found_existing_index, index_name = index_exists(DATABASE_NAME, COLLECTION_NAME, column_to_index)
     if found_existing_index:
-        print(f'Index named {index_name} on column {column_to_index} already exists')
+        print(f'Existing index named {index_name} was found on column {column_to_index}')
     else:
         index_name = create_index(DATABASE_NAME, COLLECTION_NAME, column_to_index)
-        print(f'Index named {index_name} on column {column_to_index} has been created')
+        print(f'New index named {index_name} has been created on column {column_to_index}')
 
     filter_collection(DATABASE_NAME, DATABASE_NAME, {'category': 'food'})
