@@ -169,6 +169,7 @@ def select_all(database_name: str, collection_name: str):
 
 
 def filter_collection(database_name: str, collection_name: str, kvp: dict):
+    """Filter the specified collection in the specified database using the specified key/value pair and display the results"""
     # print(kvp)
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
