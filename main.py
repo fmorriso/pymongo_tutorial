@@ -33,7 +33,7 @@ def get_connection_string() -> str:
     pwd: str = ProgramSettings.get_setting('MONGODB_PWD')
 
     conn_string = f'mongodb+srv://{uid}:{pwd}@{template}'
-    print(f'{conn_string=}')
+    # print(f'{conn_string=}')
     return conn_string
 
 
@@ -90,8 +90,7 @@ def get_mongo_db_clusterName() -> str:
 
 def keep_existing_data() -> bool:
     """Use entry in .env to determine if we keep all existing data or start from scratch"""
-    load_dotenv()
-    val = os.getenv('KEEP_EXISTING_DATA')
+    val = ProgramSettings.get_setting('KEEP_EXISTING_DATA')
     retval = eval(val)
     return retval
 
@@ -116,8 +115,10 @@ def drop_existing_collection(database_name: str, collection_name: str):
 
 
 def create_user_1_collection() -> mongoCollection:
-    db: mongoDatabase = get_database(DATABASE_NAME)
-    collection: mongoCollection = db[COLLECTION_NAME]
+    db_name: str = ProgramSettings.get_setting('MONGODB_DATABASE_NAME')
+    db: mongoDatabase = get_database(db_name)
+    col_name: str = ProgramSettings.get_setting('MONGODB_COLLECTION_NAME')
+    collection: mongoCollection = db[col_name]
     # print(type(collection))
     # now add some documents to the collection
     item_1 = {
@@ -160,15 +161,16 @@ def add_user_1_document():
         "expiry_date": expiry
     }
     # print(f'item #3: {item_3}')
-
-    db: mongoDatabase = get_database(DATABASE_NAME)
-    collection: mongoCollection = db[COLLECTION_NAME]
+    db_name: str = ProgramSettings.get_setting('MONGODB_DATABASE_NAME')
+    db: mongoDatabase = get_database(db_name)
+    col_name: str = ProgramSettings.get_setting('MONGODB_COLLECTION_NAME')
+    collection: mongoCollection = db[col_name]
     collection.insert_one(item_3)
 
 
 def select_all(database_name: str, collection_name: str):
     db: mongoDatabase = get_database(database_name)
-    collection: mongoCollection = db[COLLECTION_NAME]
+    collection: mongoCollection = db[collection_name]
     items_collection: mongoCursor = collection.find()
     display_collection(items_collection)
 
@@ -177,7 +179,7 @@ def filter_collection(database_name: str, collection_name: str, kvp: dict):
     """Filter the specified collection in the specified database using the specified key/value pair and display the results"""
     # print(kvp)
     db: mongoDatabase = get_database(database_name)
-    collection: mongoCollection = db[COLLECTION_NAME]
+    collection: mongoCollection = db[collection_name]
     items_collection: mongoCursor = collection.find(kvp)
     display_collection(items_collection)
 
@@ -185,8 +187,8 @@ def filter_collection(database_name: str, collection_name: str, kvp: dict):
 def index_exists(database_name: str, collection_name: str, column_name: str) -> (bool, str):
     """Determine if an index on the specified column already exists."""
     db: mongoDatabase = get_database(database_name)
-    collection: mongoCollection = db[COLLECTION_NAME]
-    indexes: dict = collection.index_information()
+    collection: mongoCollection = db[column_name]
+    indexes = collection.index_information()
 
     found_existing_index: bool = False
     index_name: str = ''
@@ -211,7 +213,7 @@ def index_exists(database_name: str, collection_name: str, column_name: str) -> 
 def create_index(database_name: str, collection_name: str, column_name: str) -> str:
     """ create an index on the specified column and return the name of the index created """
     db: mongoDatabase = get_database(database_name)
-    collection: mongoCollection = db[COLLECTION_NAME]
+    collection: mongoCollection = db[column_name]
     index_name = collection.create_index(column_name)
     return index_name
 
@@ -226,7 +228,13 @@ def display_collection(collection: mongoCollection):
 def get_mongodb_version() -> str:
     """return the MongoDB version being used"""
     client = get_connection()
-    version = client.server_info()['version']
+    server_information = client.server_info()
+    key: str = 'version'
+    if key in server_information:
+        version = server_information.get('version')
+    else:
+        version = 'unknown'
+
     return version
 
 
@@ -234,7 +242,7 @@ if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
     print(f'MongoDB version: {get_mongodb_version()}')
 
-    display_databases()
+    # display_databases()
     """
     display_collections(DATABASE_NAME)
 
