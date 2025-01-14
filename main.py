@@ -16,35 +16,40 @@ from pymongo.collection import Collection as mongoCollection
 from pymongo.database import Database as mongoDatabase
 from pymongo.cursor import Cursor as mongoCursor
 
-# GLOBAL constants (see get_environment_information() )
-DATABASE_NAME: str = ''
-COLLECTION_NAME: str = ''
+from program_settings import ProgramSettings
 
 
 def get_python_version() -> str:
     return f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}'
 
-def get_environment_information():
-    """initialize the global database name and collection names by reading them from the .env file"""
-    global DATABASE_NAME,COLLECTION_NAME
-    load_dotenv()
-    DATABASE_NAME = os.getenv('DATABASE_NAME')
-    COLLECTION_NAME = os.getenv('COLLECTION_NAME')
+
+def get_connection_string() -> str:
+    """
+    Get a connection string for MongoDB using the key/values stored in the .env file.
+    :return: a string containing the connection string.
+    """
+    template: str = ProgramSettings.get_setting('MONGODB_CONNECTION_TEMPLATE')
+    uid: str = ProgramSettings.get_setting('MONGODB_UID')
+    pwd: str = ProgramSettings.get_setting('MONGODB_PWD')
+
+    conn_string = f'mongodb+srv://{uid}:{pwd}@{template}'
+    print(f'{conn_string=}')
+    return conn_string
+
 
 def get_connection() -> MongoClient:
     """get a client connection to my personal MongoDB Atlas cluster using my personal usrid and password"""
-    uid = get_mongo_db_uid()
-    pwd = get_mongo_db_pwd()
-    clusterName = get_mongo_db_clusterName()
-    connection_string = f'mongodb+srv://{uid}:{pwd}@{clusterName}.6sstkik.mongodb.net/'
-    connection: mongoCollection = MongoClient(connection_string)
+    connection_string: str = get_connection_string()
+    connection: MongoClient = MongoClient(connection_string)
     return connection
 
 
 def display_databases():
     connection: MongoClient = get_connection()
-    dbs = connection.list_database_names()    
-    print(f'databases in current connection: {dbs}')
+    dbs = connection.list_database_names()
+    print(f'databases in current connection:')
+    for db in dbs:
+        print(f'\t{db}')
 
 
 def display_collections(database_name: str):
@@ -140,14 +145,14 @@ def create_user_1_collection() -> mongoCollection:
 
 def add_user_1_document():
     # start with the day after today ...
-    expiry = date.today() + relativedelta(days=1)
-    #print(f'expiry = {expiry}')
+    expiry = date.today() + relativedelta(days = 1)
+    # print(f'expiry = {expiry}')
     # add 12 months to that date
-    expiry += relativedelta(months=12)
-    #print(f'expiry = {expiry}')
+    expiry += relativedelta(months = 12)
+    # print(f'expiry = {expiry}')
     # convert a date to a datetime that goes to the end of the day
     expiry = datetime.combine(expiry, datetime.max.time())
-    #print(f'expiry = {expiry}')
+    # print(f'expiry = {expiry}')
     item_3 = {
         "item_name": "Bread",
         "quantity": 2,
@@ -182,25 +187,24 @@ def index_exists(database_name: str, collection_name: str, column_name: str) -> 
     db: mongoDatabase = get_database(database_name)
     collection: mongoCollection = db[COLLECTION_NAME]
     indexes: dict = collection.index_information()
-    
-    
+
     found_existing_index: bool = False
     index_name: str = ''
 
     for index_key in indexes.keys():
         index_value = indexes[index_key]
-        #print(index)
+        # print(index)
         index_list: list = index_value['key']
-        #print(index_list)
+        # print(index_list)
         col_tuple: tuple = index_list[0]
-        #print(type(col_tup;e))
+        # print(type(col_tup;e))
         col_name: str = col_tuple[0]
-        #print(col_name)
+        # print(col_name)
         if col_name == column_name:
             found_existing_index = True
             index_name = index_key
             break
-    
+
     return found_existing_index, index_name
 
 
@@ -216,10 +220,10 @@ def display_collection(collection: mongoCollection):
     """display a MongoDB collection in a table with headers, allowing for missing fields"""
     # convert MongoDB collection to dataframe to help with missing key fields
     items = DataFrame(collection)
-    print(items.to_markdown(index=False, tablefmt='grid'))
+    print(items.to_markdown(index = False, tablefmt = 'grid'))
 
 
-def get_mongodb_version()->str:
+def get_mongodb_version() -> str:
     """return the MongoDB version being used"""
     client = get_connection()
     version = client.server_info()['version']
@@ -229,8 +233,9 @@ def get_mongodb_version()->str:
 if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
     print(f'MongoDB version: {get_mongodb_version()}')
-    get_environment_information()
+
     display_databases()
+    """
     display_collections(DATABASE_NAME)
 
     keep_existing: bool = keep_existing_data()
@@ -250,3 +255,4 @@ if __name__ == '__main__':
         print(f'New index named {index_name} has been created on column {column_to_index}')
 
     filter_collection(DATABASE_NAME, DATABASE_NAME, {'category': 'food'})
+    """
