@@ -1,5 +1,6 @@
 # PyMongo Tutorial (with my preferences)
-Based on <em>How to Use Python with MongoDB</em>
+Based on <a href='https://www.mongodb.com/resources/languages/python'>How to Use Python with MongoDB</a> 
+
 ## Tools Used
 
 | Tool            |  Version |
@@ -25,6 +26,7 @@ Based on <em>How to Use Python with MongoDB</em>
 
 
 ## References
+
 * [PyMongo Tutorial](https://www.mongodb.com/languages/python)
 * [Python .gitignore](https://github.com/github/gitignore/blob/main/Python.gitignore)
 * [MongoDB Atlas](https://www.mongodb.com/atlas/database)
