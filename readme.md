@@ -5,15 +5,14 @@ Based on <a href='https://www.mongodb.com/resources/languages/python'>How to Use
 
 | Tool            |  Version |
 |:----------------|---------:|
-| Python          |   3.13.1 |
-| VSCode          |   1.96.2 |
-| PyCharm         | 2024.3.1 |
+| Python          |   3.13.2 |
+| VSCode          |   1.97.0 |
+| PyCharm         | 2024.3.2 |
 | Pymongo         |   4.10.1 |
-| MongoDB         |   6.0.12 |
+| MongoDB         |    8.0.4 |
 | Python-DateUtil |    2.9.0 |
 | Python-DotEnv   |    1.0.1 |
 | pandas          |    2.2.3 |
-| tablulate       |    0.9.0 |
 
 
 ## Change History
@@ -23,6 +22,7 @@ Based on <a href='https://www.mongodb.com/resources/languages/python'>How to Use
 | 2023-12-22 | Initial creation          |
 | 2023-12-24 | completed tutorial        |
 | 2025-01-14 | Add ProgramSettings class |
+| 2025-02-12 | upgrade to python 3.13.2  |
 
 
 ## References
