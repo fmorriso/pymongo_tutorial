@@ -1,0 +1,4 @@
+Pymongo~=4.10.1
+Python-DateUtil~=2.9.0
+Python-DotEnv~=1.0.1
+pandas~=2.2.3

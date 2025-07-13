@@ -1,6 +1,7 @@
 import datetime
 import os
 import sys
+from importlib.metadata import version
 from datetime import *
 import pandas as pd
 # WARNING: to use the DataFrame to_markdown() method YOU MUST SEPARATELY INSTALL tabulate
@@ -237,10 +238,42 @@ def get_mongodb_version() -> str:
 
     return version
 
+def get_required_package_names() -> list[str]:
+    """
+    read the requirements.txt file and return a sorted list of package names.
+    :return: sorted list of package names
+    :rtype: list[str
+    """
+    packages: list[str] = []
+    with open('requirements.txt') as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue  # skip blank lines and comments
+            package = line.split('~')[0].strip()  # works for ~=, >=, ==, etc.
+            packages.append(package)
+
+    packages.sort()
+    return packages
+
+def get_package_version(package_name: str) -> str:
+    return version(package_name)
 
 if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
-    print(f'MongoDB version: {get_mongodb_version()}')
+
+    package_names = get_required_package_names()
+
+    for pkg in package_names:
+        package_name = f'{pkg}'.ljust(18)
+        try:
+            print(f'{package_name}{get_package_version(pkg)}')
+        except:
+            print(e)
+
+    package_name = 'MongoDB'.ljust(18)
+
+    print(f'{package_name}{get_mongodb_version()}')
 
     # display_databases()
     """

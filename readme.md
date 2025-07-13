@@ -3,16 +3,16 @@ Based on <a href='https://www.mongodb.com/resources/languages/python'>How to Use
 
 ## Tools Used
 
-| Tool            |  Version |
-|:----------------|---------:|
-| Python          |   3.13.2 |
-| VSCode          |   1.97.0 |
-| PyCharm         | 2024.3.2 |
-| Pymongo         |   4.10.1 |
-| MongoDB         |    8.0.4 |
-| Python-DateUtil |    2.9.0 |
-| Python-DotEnv   |    1.0.1 |
-| pandas          |    2.2.3 |
+| Tool            |    Version |
+|:----------------|-----------:|
+| Python          |     3.13.3 |
+| VSCode          |     1.99.0 |
+| PyCharm         | 2025.1.3.1 |
+| Pymongo         |     4.10.1 |
+| MongoDB         |      8.0.4 |
+| Python-DateUtil |      2.9.0 |
+| Python-DotEnv   |      1.0.1 |
+| pandas          |      2.2.3 |
 
 
 ## Change History
