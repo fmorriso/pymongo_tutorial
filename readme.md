@@ -17,12 +17,13 @@ Based on <a href='https://www.mongodb.com/resources/languages/python'>How to Use
 
 ## Change History
 
-| Date       | Description               |
-|:-----------|:--------------------------|
-| 2023-12-22 | Initial creation          |
-| 2023-12-24 | completed tutorial        |
-| 2025-01-14 | Add ProgramSettings class |
-| 2025-02-12 | upgrade to python 3.13.2  |
+| Date       | Description                                                 |
+|:-----------|:------------------------------------------------------------|
+| 2023-12-22 | Initial creation                                            |
+| 2023-12-24 | completed tutorial                                          |
+| 2025-01-14 | Add ProgramSettings class                                   |
+| 2025-02-12 | upgrade to python 3.13.2                                    |
+| 2025-07-13 | use requirements.txt to display package version information |
 
 
 ## References

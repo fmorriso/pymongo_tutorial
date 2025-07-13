@@ -1,21 +1,18 @@
 import datetime
 import os
 import sys
-from importlib.metadata import version
 from datetime import *
-import pandas as pd
-# WARNING: to use the DataFrame to_markdown() method YOU MUST SEPARATELY INSTALL tabulate
-from pandas import DataFrame
+from importlib.metadata import version
 
-import pymongo
-from dateutil import parser
 from dateutil.relativedelta import *
 from dotenv import load_dotenv
+# WARNING: to use the DataFrame to_markdown() method YOU MUST SEPARATELY INSTALL tabulate
+from pandas import DataFrame
 from pymongo import MongoClient
 # alias some types to shorter ones to save on typing and avoid namespace collisions with other packages
 from pymongo.collection import Collection as mongoCollection
-from pymongo.database import Database as mongoDatabase
 from pymongo.cursor import Cursor as mongoCursor
+from pymongo.database import Database as mongoDatabase
 
 from program_settings import ProgramSettings
 
@@ -238,6 +235,7 @@ def get_mongodb_version() -> str:
 
     return version
 
+
 def get_required_package_names() -> list[str]:
     """
     read the requirements.txt file and return a sorted list of package names.
@@ -253,11 +251,13 @@ def get_required_package_names() -> list[str]:
             package = line.split('~')[0].strip()  # works for ~=, >=, ==, etc.
             packages.append(package)
 
-    packages.sort()
+    packages.sort(key=str.lower)
     return packages
+
 
 def get_package_version(package_name: str) -> str:
     return version(package_name)
+
 
 if __name__ == '__main__':
     print(f"Python version: {get_python_version()}")
@@ -268,7 +268,7 @@ if __name__ == '__main__':
         package_name = f'{pkg}'.ljust(18)
         try:
             print(f'{package_name}{get_package_version(pkg)}')
-        except:
+        except Exception as e:
             print(e)
 
     package_name = 'MongoDB'.ljust(18)
